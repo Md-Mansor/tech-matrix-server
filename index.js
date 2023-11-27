@@ -8,8 +8,12 @@ const port = process.env.PORT || 5000;
 
 
 // middleware
-app.use(cors());
-app.use(express());
+app.use(cors({
+    origin: ['http://localhost:5173'],
+    credentials: true,
+})
+);
+app.use(express.json());
 
 // user : final-project 
 // pass : Q0pLr2VsR0z9oQY7
@@ -32,6 +36,33 @@ async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
         // await client.connect();
+
+        const userCollection = client.db('techMatrix').collection('users')
+
+
+        app.get('/users', async (req, res) => {
+            const result = await userCollection.find().toArray();
+            res.send(result)
+        });
+
+        // user related api
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const query = { email: user.email }
+            const userExist = await userCollection.findOne(query);
+            if (userExist) {
+                return res.send({ massage: "user Exist", insertedId: null })
+            }
+            const result = await userCollection.insertOne(user);
+            res.send(result);
+        })
+
+
+
+
+
+
+
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");

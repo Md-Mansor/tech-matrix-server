@@ -38,6 +38,27 @@ async function run() {
         // await client.connect();
 
         const userCollection = client.db('techMatrix').collection('users')
+        const productCollection = client.db('techMatrix').collection('products')
+
+
+        // products post and get
+
+        app.post('/products', async (req, res) => {
+            const product = req.body;
+            const result = await productCollection.insertOne(product);
+            res.send(result)
+        })
+
+        app.get('/products', async (req, res) => {
+            const result = await productCollection.find().toArray();
+            res.send(result)
+        })
+
+
+
+
+
+
 
 
         app.get('/users', async (req, res) => {
@@ -50,7 +71,7 @@ async function run() {
             console.log(email);
             const query = { email: email };
             const result = await userCollection.findOne(query);
-            console.log(result);
+            // console.log(result);
             res.send(result);
         })
 

@@ -60,11 +60,17 @@ async function run() {
             const result = await productCollection.findOne(query);
             res.send(result);
         })
-
-
-
-
-
+        app.patch('/products/featured/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    featured: "true",
+                }
+            }
+            const result = await productCollection.updateOne(filter, updateDoc);
+            res.send(result);
+        })
 
 
 

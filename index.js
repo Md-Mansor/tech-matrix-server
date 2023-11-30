@@ -50,16 +50,19 @@ async function run() {
         })
 
         app.get('/products', async (req, res) => {
+
             const result = await productCollection.find().toArray();
             res.send(result)
         })
 
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
-            const query = { _id: id };
+            const query = { _id: new ObjectId(id) };
             const result = await productCollection.findOne(query);
+            console.log(result);
             res.send(result);
         })
+
         app.patch('/products/featured/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) };
@@ -69,6 +72,31 @@ async function run() {
                 }
             }
             const result = await productCollection.updateOne(filter, updateDoc);
+            res.send(result);
+        })
+        app.patch('/product/status/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    status: "verified",
+                }
+            }
+            const result = await productCollection.updateOne(filter, updateDoc);
+            res.send(result)
+        })
+
+        app.get('/product/featured', async (req, res) => {
+            const query = { featured: "true" };
+            const result = await productCollection.find(query).toArray();
+            console.log(result);
+            res.send(result);
+        })
+
+        app.get('/product/verified', async (req, res) => {
+            const query = { status: "verified" };
+            const result = await productCollection.find(query).toArray();
+            console.log(result);
             res.send(result);
         })
 

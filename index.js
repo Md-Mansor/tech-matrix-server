@@ -59,7 +59,7 @@ async function run() {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
             const result = await productCollection.findOne(query);
-            console.log(result);
+            // console.log(result);
             res.send(result);
         })
 
@@ -89,14 +89,14 @@ async function run() {
         app.get('/product/featured', async (req, res) => {
             const query = { featured: "true" };
             const result = await productCollection.find(query).toArray();
-            console.log(result);
+            // console.log(result);
             res.send(result);
         })
 
-        app.get('/product/verified', async (req, res) => {
+        app.get('/product/status', async (req, res) => {
             const query = { status: "verified" };
             const result = await productCollection.find(query).toArray();
-            console.log(result);
+            // console.log(result);
             res.send(result);
         })
 
@@ -134,14 +134,25 @@ async function run() {
             const result = await userCollection.deleteOne(query);
             res.send(result);
         })
-        // make user moderator or admin
+        // make user admin
         app.patch('/users/admin/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) };
             const updateDoc = {
                 $set: {
-                    role: "moderator",
                     role: "admin",
+                }
+            }
+            const result = await userCollection.updateOne(filter, updateDoc);
+            res.send(result);
+        })
+        // make user moderator
+        app.patch('/users/moderator/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    role: "moderator",
                 }
             }
             const result = await userCollection.updateOne(filter, updateDoc);

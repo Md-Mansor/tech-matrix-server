@@ -11,7 +11,7 @@ const port = process.env.PORT || 5000;
 
 // middleware
 app.use(cors({
-    origin: ['http://localhost:5173', "https://voracious-shoes.surge.sh"],
+    origin: ['http://localhost:5173'],
     credentials: true,
 })
 );
@@ -40,6 +40,7 @@ async function run() {
         // await client.connect();
 
         const userCollection = client.db('techMatrix').collection('users')
+        const deletedUserCollection = client.db('techMatrix').collection('deletedUser')
         const productCollection = client.db('techMatrix').collection('products')
         // jwt related api
         app.post('/jwt', async (req, res) => {
@@ -109,8 +110,6 @@ async function run() {
             res.send(result);
         })
 
-
-
         app.get('/users', async (req, res) => {
             const result = await userCollection.find().toArray();
             res.send(result)
@@ -143,6 +142,21 @@ async function run() {
             const result = await userCollection.deleteOne(query);
             res.send(result);
         })
+
+        app.get('/deletedUsers', async (req, res) => {
+            const result = await deletedUserCollection.find().toArray();
+            res.send(result)
+        })
+
+        app.post('/deletedUsers', async (req, res) => {
+            const deletedUser = req.body.user;
+            const result = await deletedUserCollection.insertOne(deletedUser)
+            console.log('Deleted User:', deletedUser);
+            res.send(result)
+            // res.status(200).json({ message: 'Deleted user saved successfully' });
+        });
+
+
         // make user admin
         app.patch('/users/admin/:id', async (req, res) => {
             const id = req.params.id;

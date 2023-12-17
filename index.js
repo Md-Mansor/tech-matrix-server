@@ -142,6 +142,12 @@ async function run() {
             const result = await userCollection.deleteOne(query);
             res.send(result);
         })
+        app.delete('/deletedUsers/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await deletedUserCollection.deleteOne(query);
+            res.send(result)
+        })
 
         app.get('/deletedUsers', async (req, res) => {
             const result = await deletedUserCollection.find().toArray();
